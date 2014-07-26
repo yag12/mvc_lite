@@ -40,7 +40,7 @@ class Bootstrap
 		$lib = dirname(__FILE__);
 
 		require_once $lib . '/Function.php';
-		require_once $lib . '/Mysql.php';
+		require_once $lib . '/Mysqli.php';
 		require_once $lib . '/MobileDetect.php';
 		require_once $lib . '/FileUpload.php';
 		require_once $lib . '/ThumbImage.php';
@@ -61,7 +61,7 @@ class Bootstrap
 	{
 		if(!empty($this->config['database']))
 		{
-			$this->db = new Mysql($this->config['database']);
+			$this->db = new MysqliDB($this->config['database']);
 		}
 	}
 

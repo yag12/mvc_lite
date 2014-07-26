@@ -1,8 +1,8 @@
 var global = {
-	defaultUrl: "/framework",
-	jsUrl: "/framework/js",
-	cssUrl: "/framework/css",
-	imgUrl: "/framework/image",
+	defaultUrl: "/mvc_lite",
+	jsUrl: "/mvc_lite/js",
+	cssUrl: "/mvc_lite/css",
+	imgUrl: "/mvc_lite/image",
 
 	defaultJs: [
 		"jquery@jquery-1.9.1",

@@ -1,11 +1,11 @@
 <?php
-class MysqlDB
+class MysqliDB
 {
 	/*
 	* @Desc : Database
 	* @Var : Object
 	*/
-	protected $db = null;
+	private $db = null;
 
 	protected $where = array();
 	protected $fields = array();
@@ -22,28 +22,19 @@ class MysqlDB
 	*/
 	public function __construct(&$config = null)
 	{
-		$server = $config['host'] . (!empty($config['port']) ? ':' . $config['port'] : '');
-		$user = $config['user'];
-		$passwd = $config['passwd'];
-		$name = $config['db'];
-
-		$connect = mysql_connect($server, $user, $passwd) or die(mysql_error());
-		$this->db = mysql_select_db($name, $connect);
-		$this->setEncode();
-	}
-
-	private function setEncode()
-	{
-		mysql_query("SET NAMES UTF8");
+		$port = !empty($config['port']) ? $config['port'] : null;
+		$this->db = new mysqli($config['host'], $config['user'], $config['passwd'], $config['db'], $port);
+		if (mysqli_connect_error()) {
+			die('Connect Error (' . mysqli_connect_errno() . ') '. mysqli_connect_error());
+		}
 	}
 
 	/*
 	* @Desc : Data Select
 	* @Param : mixed $tb
-	* @Param : false or string $cache
 	* @Return : array
 	*/
-	public function select($tb = null, $cache = false)
+	public function select($tb = null)
 	{
 		$rows = null;
 		$fields = !empty($this->fields) ? join(',', $this->fields) : '*';
@@ -71,14 +62,17 @@ class MysqlDB
 			$limit = ' LIMIT ' . $this->limit['offset'] . ', ' . $this->limit['limit'];
 		}
 
-		$query = mysql_query('SELECT COUNT(*) FROM ' . $tb . ' ' . $wheres);
-		$count = mysql_fetch_array($query);
+		$result = $this->db->query('SELECT COUNT(*) FROM ' . $tb . ' ' . $wheres);
+		$count = !empty($result) ? $result->fetch_array(MYSQLI_NUM) : 0;
 		$this->total = !empty($count[0]) ? $count[0] : 0;
 
-		$query = mysql_query('SELECT ' . $fields . ' FROM ' . $tb . ' ' . $wheres . $sort . $limit);
-		while(($row = mysql_fetch_array($query)) !== false)
+		$result = $this->db->query('SELECT ' . $fields . ' FROM ' . $tb . ' ' . $wheres . $sort . $limit);
+		if(!empty($result))
 		{
-			$rows[] = $row;
+			for($i=0; $i<$result->num_rows; $i++)
+			{
+				$rows[] = $result->fetch_array(MYSQLI_ASSOC);
+			}
 		}
 
 		return $rows;
@@ -100,7 +94,7 @@ class MysqlDB
 			}
 			$fields = join(',', $fields);
 
-			mysql_query('INSERT INTO ' . $tb . ' SET ' . $fields);
+			$this->db->query('INSERT INTO ' . $tb . ' SET ' . $fields);
 
 			return true;
 		}
@@ -134,7 +128,7 @@ class MysqlDB
 				$wheres = join(' AND ', $wheres);
 			}
 
-			mysql_query('UPDATE ' . $tb . ' SET ' . $fields . ' ' . $wheres);
+			$this->db->query('UPDATE ' . $tb . ' SET ' . $fields . ' ' . $wheres);
 
 			return true;
 		}
@@ -159,7 +153,7 @@ class MysqlDB
 			$wheres = join(' AND ', $wheres);
 		}
 
-		mysql_query('DELETE FROM ' . $tb . ' ' . $where);
+		$this->db->query('DELETE FROM ' . $tb . ' ' . $where);
 
 		return true;
 	}

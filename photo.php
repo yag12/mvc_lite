@@ -5,7 +5,7 @@ $offset = 10;
 $pgnum = !empty($_GET['pgnum']) ? $_GET['pgnum'] : 1;
 $limit = ($pgnum - 1) * $offset;
 
-$rows = $db->limit($limit, $offset)->select('photo');
+$rows = $db->limit($limit, $offset)->select('webapp_photo');
 $paginator = $db->getPaginator($pgnum);
 
 $bootstrap->setParam('paginator', $paginator);
