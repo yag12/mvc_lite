@@ -47,6 +47,7 @@ class MysqliDB
 				$wheres[] = $key . '=' . (is_string($value) ? "'" . $value . "'" : $value);
 			}
 			$wheres = join(' AND ', $wheres);
+			if(!empty($wheres)) $wheres = 'WHERE ' . $wheres;
 		}
 
 		$sort = !empty($this->sort) ? ' ORDER BY ' . join(',', $this->sort) : '';
@@ -126,6 +127,7 @@ class MysqliDB
 					$wheres[] = $key . '=' . (is_string($value) ? "'" . $value . "'" : $value);
 				}
 				$wheres = join(' AND ', $wheres);
+				if(!empty($wheres)) $wheres = 'WHERE ' . $wheres;
 			}
 
 			$this->db->query('UPDATE ' . $tb . ' SET ' . $fields . ' ' . $wheres);
@@ -151,6 +153,7 @@ class MysqliDB
 				$wheres[] = $key . '=' . (is_string($value) ? "'" . $value . "'" : $value);
 			}
 			$wheres = join(' AND ', $wheres);
+			if(!empty($wheres)) $wheres = 'WHERE ' . $wheres;
 		}
 
 		$this->db->query('DELETE FROM ' . $tb . ' ' . $where);
